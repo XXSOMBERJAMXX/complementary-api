@@ -22,6 +22,18 @@ def health_check():
         'version': '1.0.0'
     }), 200
 
+@app.route('/comments', methods=['GET'])
+def get_comments():
+    """Obtener todos los comentarios"""
+    try:
+        return jsonify({
+            'comments': comments_db,
+            'total': len(comments_db)
+        }), 200
+    except Exception as e:
+        logger.error(f"Error al obtener comentarios: {str(e)}")
+        return jsonify({'error': 'Error interno del servidor'}), 500
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({'error': 'Endpoint no encontrado'}), 404
