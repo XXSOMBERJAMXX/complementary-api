@@ -76,3 +76,4 @@ class TestFlaskApp:
         
         data = json.loads(response.data)
         assert 'error' in data
+    
