@@ -19,4 +19,11 @@ class TestFlaskApp:
         assert data['status'] == 'healthy'
         assert 'timestamp' in data
         assert data['service'] == 'flask-comments-api'
-    
+    def test_get_comments_empty(self, client):
+        """Test obtener comentarios cuando está vacío"""
+        response = client.get('/comments')
+        assert response.status_code == 200
+        
+        data = json.loads(response.data)
+        assert data['total'] == 0
+        assert data['comments'] == []
