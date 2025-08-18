@@ -62,3 +62,10 @@ class TestFlaskApp:
         
         data = json.loads(response.data)
         assert 'error' in data
+    def test_delete_comment_not_found(self, client):
+        """Test eliminar comentario que no existe"""
+        response = client.delete('/comments/999')
+        assert response.status_code == 404
+        
+        data = json.loads(response.data)
+        assert 'error' in data
