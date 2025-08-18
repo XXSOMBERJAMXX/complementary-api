@@ -54,13 +54,12 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/auth@v2
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
     
     - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
+      uses: google-github-actions/setup-gcloud@v2
     
     - name: Verify GCP Authentication
       run: |
@@ -71,11 +70,13 @@ jobs:
     - name: Create Artifact Registry repository if not exists
       run: |
         gcloud artifacts repositories describe $REPOSITORY \
-          --location=$REGION || \
+          --location=$REGION \
+          --project=$PROJECT_ID || \
         gcloud artifacts repositories create $REPOSITORY \
           --repository-format=docker \
           --location=$REGION \
-          --description="Repository for Flask Comments API"
+          --description="Repository for Flask Comments API" \
+          --project=$PROJECT_ID
     
     - name: Configure Docker for Artifact Registry
       run: |
@@ -108,12 +109,13 @@ jobs:
           --timeout 300 \
           --concurrency 100 \
           --set-env-vars="ENVIRONMENT=production,PORT=8080" \
-          --execution-environment gen2
+          --execution-environment gen2 \
+          --project=$PROJECT_ID
     
     - name: Get service URL
       id: deploy-url
       run: |
-        SERVICE_URL=$(gcloud run services describe $SERVICE_NAME --region=$REGION --format='value(status.url)')
+        SERVICE_URL=$(gcloud run services describe $SERVICE_NAME --region=$REGION --format='value(status.url)' --project=$PROJECT_ID)
         echo "Service deployed at: $SERVICE_URL"
         echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV
         echo "url=$SERVICE_URL" >> $GITHUB_OUTPUT
