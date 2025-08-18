@@ -27,3 +27,22 @@ class TestFlaskApp:
         data = json.loads(response.data)
         assert data['total'] == 0
         assert data['comments'] == []
+    def test_create_comment(self, client):
+        """Test crear comentario"""
+        comment_data = {
+            'content': 'Este es un comentario de prueba',
+            'author': 'Usuario Test'
+        }
+        
+        response = client.post('/comments', 
+                             data=json.dumps(comment_data),
+                             content_type='application/json')
+        
+        assert response.status_code == 201
+        
+        data = json.loads(response.data)
+        assert data['content'] == comment_data['content']
+        assert data['author'] == comment_data['author']
+        assert 'id' in data
+        assert 'timestamp' in data
+    
