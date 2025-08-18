@@ -33,6 +33,20 @@ def get_comments():
     except Exception as e:
         logger.error(f"Error al obtener comentarios: {str(e)}")
         return jsonify({'error': 'Error interno del servidor'}), 500
+@app.route('/comments/<int:comment_id>', methods=['GET'])
+def get_comment(comment_id):
+    """Obtener un comentario específico"""
+    try:
+        comment = next((c for c in comments_db if c['id'] == comment_id), None)
+        
+        if not comment:
+            return jsonify({'error': 'Comentario no encontrado'}), 404
+            
+        return jsonify(comment), 200
+        
+    except Exception as e:
+        logger.error(f"Error al obtener comentario {comment_id}: {str(e)}")
+        return jsonify({'error': 'Error interno del servidor'}), 500
 
 @app.errorhandler(404)
 def not_found(error):
