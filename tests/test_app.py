@@ -55,4 +55,10 @@ class TestFlaskApp:
         
         data = json.loads(response.data)
         assert 'error' in data
-    
+    def test_get_comment_not_found(self, client):
+        """Test obtener comentario que no existe"""
+        response = client.get('/comments/999')
+        assert response.status_code == 404
+        
+        data = json.loads(response.data)
+        assert 'error' in data
