@@ -47,7 +47,24 @@ def get_comment(comment_id):
     except Exception as e:
         logger.error(f"Error al obtener comentario {comment_id}: {str(e)}")
         return jsonify({'error': 'Error interno del servidor'}), 500
-
+@app.route('/comments/<int:comment_id>', methods=['DELETE'])
+def delete_comment(comment_id):
+    """Eliminar un comentario"""
+    try:
+        global comments_db
+        comment = next((c for c in comments_db if c['id'] == comment_id), None)
+        
+        if not comment:
+            return jsonify({'error': 'Comentario no encontrado'}), 404
+        
+        comments_db = [c for c in comments_db if c['id'] != comment_id]
+        logger.info(f"Comentario eliminado: ID {comment_id}")
+        
+        return jsonify({'message': 'Comentario eliminado exitosamente'}), 200
+        
+    except Exception as e:
+        logger.error(f"Error al eliminar comentario {comment_id}: {str(e)}")
+        return jsonify({'error': 'Error interno del servidor'}), 500
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({'error': 'Endpoint no encontrado'}), 404
