@@ -45,4 +45,14 @@ class TestFlaskApp:
         assert data['author'] == comment_data['author']
         assert 'id' in data
         assert 'timestamp' in data
+    def test_create_comment_missing_data(self, client):
+        """Test crear comentario con datos faltantes"""
+        response = client.post('/comments', 
+                             data=json.dumps({'content': 'Solo contenido'}),
+                             content_type='application/json')
+        
+        assert response.status_code == 400
+        
+        data = json.loads(response.data)
+        assert 'error' in data
     
