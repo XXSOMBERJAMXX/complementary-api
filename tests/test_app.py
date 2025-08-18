@@ -69,3 +69,10 @@ class TestFlaskApp:
         
         data = json.loads(response.data)
         assert 'error' in data
+    def test_endpoint_not_found(self, client):
+        """Test endpoint que no existe"""
+        response = client.get('/nonexistent')
+        assert response.status_code == 404
+        
+        data = json.loads(response.data)
+        assert 'error' in data
